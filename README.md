@@ -18,3 +18,18 @@ Todo el flask esta basado en el tutorial del sitio oficial de flask:
 https://flask.palletsprojects.com/en/2.0.x/tutorial/
 
 Con los proximos commits iremos mejorandolo y completandolo.
+
+Virtualizacion:
+
+En el dir base de la app:
+	python -m venv .
+y despues
+	. bin/activate
+
+Agregado "requirements.txt" para instalar los paquetes necesarios:
+
+Se usa asi, un vez activado el ambiente virtual:
+
+1. cd to the directory where requirements.txt is located.
+2. activate your virtualenv.
+3. run: pip install -r requirements.txt in your shell.
