@@ -14,7 +14,7 @@ Para seguir:
    Obtener reportes de la data propuesta en varios formatos.
    
    
-Todo el faslk esta basado en el tutorial del sitio oficial de flask:
+Todo el flask esta basado en el tutorial del sitio oficial de flask:
 https://flask.palletsprojects.com/en/2.0.x/tutorial/
 
-Con los proximos commis iremos mejorandolo y completandolo.
+Con los proximos commits iremos mejorandolo y completandolo.
