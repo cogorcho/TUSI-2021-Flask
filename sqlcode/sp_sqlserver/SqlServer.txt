@@ -1,0 +1,273 @@
+# ----------------------------------------------
+# Importar los archivos
+# ----------------------------------------------
+Escuelas.csv
+Modalidades.csv
+ModAdultos.csv
+ModArtistica.csv
+ModComun.csv
+ModEspecial.csv
+ModHospitalaria.csv
+ServiciosComplementarios.csv
+
+
+# ----------------------------------------------
+# Verificacion
+# ----------------------------------------------
+
+select count(*) FROM Escuelas -> 63362
+
+select 63362 - count(*) from ModEspecial
+where temprana is null
+and inicial is NULL
+and PRIMARIA is null 
+and Secundaria is null
+and Integracion is null 
+
+select 63362 - count(*) from ModAdultos
+where Primaria is NULL
+and EGB3 is null 
+and Secundaria is NULL 
+and Alfabetizacion is NULL 
+and Formacion_Profesional is NULL
+and Formacion_Profesional_INET is NULL
+
+select 63362 - count(*) from ModArtistica
+where Secundaria is NULL 
+and Superior_No_Universitario is NULL
+and Cursos_y_Talleres is null
+
+select 63362 - count(*) from ModComun
+where Secundaria is NULL 
+and maternal is NULL
+and inicial is NULL
+and primaria is NULL
+and Secundaria_Tecnica_INET is null 
+and Superior_No_Universitario is NULL
+and Superior_No_Universitario_INET is NULL
+
+
+select 63362 - count(*) from ModHospitalaria
+where PRIMARIA is null 
+and Secundaria is null
+and inicial is null 
+
+select count(*) from ServiciosComplementarios
+where Servicios_Complementarios is null 
+
+# ----------------------------------------------
+# Limpieza
+# ----------------------------------------------
+delete from ModEspecial
+where temprana is null
+and inicial is NULL
+and PRIMARIA is null 
+and Secundaria is null
+and Integracion is null ;
+GO
+
+delete from ModAdultos
+where Primaria is NULL
+and EGB3 is null 
+and Secundaria is NULL 
+and Alfabetizacion is NULL 
+and Formacion_Profesional is NULL
+and Formacion_Profesional_INET is NULL;
+GO
+
+delete from ModArtistica
+where Secundaria is NULL 
+and Superior_No_Universitario is NULL
+and Cursos_y_Talleres is null;
+GO
+
+delete from ModComun
+where Secundaria is NULL 
+and maternal is NULL
+and inicial is NULL
+and primaria is NULL
+and Secundaria_Tecnica_INET is null 
+and Superior_No_Universitario is NULL
+and Superior_No_Universitario_INET is NULL;
+GO
+
+
+delete from ModHospitalaria
+where PRIMARIA is null 
+and Secundaria is null
+and inicial is null; 
+GO
+
+delete from ServiciosComplementarios
+where Servicios_Complementarios is null 
+GO
+
+# ----------------------------------------------
+# Normalizacion
+# ----------------------------------------------
+Tablas a crear en funcion de las columnas:
+    Jurisdiccion
+    Ambito
+    Sector 
+    Departamento (y codigo)
+    Localidad (y codigo)
+
+create table Ambito (
+    id int identity(1,1) primary key,
+    nombre varchar(128) not null
+)
+GO
+
+create unique index uid_ambito on Ambito(nombre)
+GO
+
+insert into Ambito(nombre)
+select distinct Ambito from Escuelas;
+GO
+
+select * from Ambito
+GO
+
+#--------------------------------------
+create table Sector (
+    id int identity(1,1) primary key,
+    nombre varchar(128) not null
+)
+GO
+
+create unique index uid_sector on Sector(nombre)
+GO
+
+insert into Sector(nombre)
+select distinct Sector from Escuelas;
+GO
+
+select * from Sector
+GO
+
+#--------------------------------------
+create table Jurisdiccion (
+    id int identity(1,1) primary key,
+    nombre varchar(128) not null
+)
+GO
+
+create unique index uid_jurisdiccion on Jurisdiccion(nombre)
+GO
+
+insert into Jurisdiccion(nombre)
+select distinct Jurisdiccion from Escuelas;
+GO
+
+select * from Jurisdiccion
+GO
+
+#--------------------------------------
+create table Departamento (
+    id int identity(1,1) primary key,
+    jurisdiccion_id int not null,
+    codigo varchar(32) not null,
+    nombre varchar(128) not null,
+    FOREIGN KEY (jurisdiccion_id) REFERENCES Jurisdiccion(id)
+)
+GO
+
+insert into Departamento(jurisdiccion_id,codigo,nombre)
+select distinct j.id, e.CodDepartamento, e.Departamento 
+from Escuelas e
+inner join Jurisdiccion j
+    on j.nombre = e.Jurisdiccion
+GO
+
+select J.id, J.nombre, d.id, d.codigo, d.nombre 
+from Departamento d
+inner join Jurisdiccion j
+    on j.id = d.jurisdiccion_id
+GO
+
+#--------------------------------------
+create table Localidad(
+    id int identity(1,1) primary key,
+    departamento_id int not null,
+    codigo varchar(32) not null,
+    nombre varchar(256) not null,
+    FOREIGN KEY (departamento_id) REFERENCES Departamento(id)
+)
+GO
+
+insert into Localidad(departamento_id,codigo,nombre)
+select distinct d.id, e.CodLocalidad, e.Localidad 
+from Escuelas e
+inner join Departamento d
+    on d.nombre = e.departamento
+    and d.codigo = e.CodDepartamento
+GO
+
+select j.id, j.nombre, d.id, d.codigo, d.nombre, l.codigo, l.nombre
+from Localidad l
+inner join Departamento d
+    on d.id = l.departamento_id
+inner join Jurisdiccion j
+    on j.id = d.jurisdiccion_id
+GO
+
+
+#--------------------------------------
+create table NEscuelas(
+    id int identity(1,1) primary key,
+    cue int not null,
+    cueanexo int not null,
+    localidad_id int not null,
+    ambito_id int not null,
+    sector_id int not null,
+    nombre varchar(512) not null,
+    domicilio varchar(512) not null,
+    codpostal varchar(64),
+    codigoarea varchar(32),
+    telefono varchar(128),
+    email varchar(512),
+    FOREIGN KEY (localidad_id) REFERENCES Localidad(id),
+    FOREIGN KEY (ambito_id) REFERENCES Ambito(id),
+    FOREIGN KEY (sector_id) REFERENCES Sector(id)
+)
+GO
+
+create unique index uidx_NEscuelas_CUE on NEscuelas(cue, cueanexo)
+GO
+
+insert into NEscuelas(
+    cue,    cueanexo,    localidad_id,
+    ambito_id,    sector_id,    nombre,
+    domicilio,    codpostal,    codigoarea,
+    telefono,    email
+)
+select e.cue, e.cuanexo, l.id, 
+a.id, s.id, e.nombre, 
+isnull(e.domicilio,'No diponible'), e.codpostal, e.codarea, 
+e.telefono, e.email
+from Escuelas e
+inner join Ambito a
+    on a.nombre = e.ambito
+inner join Sector s
+    on s.nombre = e.sector
+inner join Localidad l
+    on l.nombre = e.Localidad
+    and l.codigo = e.CodLocalidad
+inner join Departamento d
+    on d.id = l.departamento_id
+
+GO
+
+# ----------------------------------------------
+# Limpieza
+# ----------------------------------------------
+update NEscuelas set domicilio = LTRIM(RTRIM(domicilio))
+GO
+update NEscuelas set codpostal = LTRIM(RTRIM(codpostal))
+GO
+update NEscuelas set codigoarea = LTRIM(RTRIM(codigoarea))
+GO
+update NEscuelas set telefono = LTRIM(RTRIM(telefono))
+GO
+update NEscuelas set email = LTRIM(RTRIM(codpoemailstal))
+GO

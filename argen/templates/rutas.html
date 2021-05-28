@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+	<h1 class="Display-1">Rutas Disponibles</h1>
+	<hr>
+	<table class="table table-sm table-striped table-hover">
+		<thead class="thead-dark">
+			<tr><td>Módulo</td><td>Rutas</td></tr>
+		</thead>
+		<tbody>
+			<tr><td>__init__</td><td>/</td></tr>
+			<tr><td>__init__</td><td>/inicio</td></tr>
+			<tr><td>escuelas</td><td>/argen/json/escuelas/&lt;provincia&gt;</td></tr>
+			<tr><td>escuelas</td><td>/argen/html/escuelas/&lt;provincia&gt;</td></tr>
+			<tr><td>escuelas</td><td>/argen/json/escuelas/contar/</td></tr>
+			<tr><td>escuelas</td><td>/argen/html/escuelas/contar/</td></tr>
+			<tr><td>escuelas</td><td>/argen/json/ambito</td></tr>
+			<tr><td>escuelas</td><td>/argen/html/ambito</td></tr>
+			<tr><td>escuelas</td><td>/argen/json/sector</td></tr>
+			<tr><td>escuelas</td><td>/argen/html/sector</td></tr>
+			<tr><td>escuelas</td><td><a href="/argen/json/provincias">/argen/json/provincias</a></td></tr>
+			<tr><td>escuelas</td><td><a href="/argen/html/provincias">/argen/html/provincias</a></td></tr>
+			<tr><td>escuelas</td><td><a href="/argen/json/departamentos">/argen/json/departamentos</a></td></tr>
+			<tr><td>escuelas</td><td><a href="/argen/html/departamentos">/argen/html/departamentos</a></td></tr>
+			<tr><td>escuelas</td><td><a href="/argen/json/ambito">/argen/json/ambito</a></td></tr>
+			<tr><td>escuelas</td><td><a href="/argen/html/ambito">/argen/html/ambito</a></td></tr>
+			<tr><td>escuelas</td><td><a href="/argen/json/sector">/argen/json/sector</a></td></tr>
+			<tr><td>escuelas</td><td><a href="/argen/html/sector">/argen/html/sector</a></td></tr>
+			<tr><td>escuelas</td><td>/argen/html/escuelas/tiposeducacion</td></tr>
+			<tr><td>escuelas</td><td>/argen/json/escuelas/tiposeducacion</td></tr>
+			<tr><td>informationschema</td><td>/db/json/schemas</td></tr>
+			<tr><td>informationschema</td><td>/db/json/tables/&lt;schema&gt;</td></tr>
+			<tr><td>informationschema</td><td>/db/json/columns/&lt;schema&gt;/<table></td></tr>
+			<tr><td>informationschema</td><td>/db/json/routines/&lt;schema&gt;</td></tr>
+			<tr><td>informationschema</td><td>/db/json/code/&lt;schema&gt;/&lt;routine&gt;</td></tr>
+			<tr><td>informationschema</td><td>/db/json/params/&lt;schema&gt;/&lt;routine&gt;</td></tr>
+		</tbody>
+	</table>
+{% endblock %}
